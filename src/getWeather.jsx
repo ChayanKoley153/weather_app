@@ -23,14 +23,13 @@ const getWeather = () => {
                 `${endPoints.WEATHER}?q=${city}&appid=${API_KEY}&units=metric`
             );
 
+            setWeather(weatherRes.data);
+
             const forecastRes = await axiosInstance.get(
                 `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`
             );
 
-            setWeather(weatherRes.data);
-
             const dailyData = forecastRes.data.list.filter((item, index) => index % 8 === 0);
-
             setForecast(dailyData);
         } catch (err) {
             setError("City not found");
