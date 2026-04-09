@@ -1,46 +1,15 @@
 import React, { useState } from "react";
 import "./App.css";
-import axiosInstance from "../api/axios";
-import { endPoints } from "../api/endPoints";
-
-const API_KEY = "e479261a5ef3e6ab78a63936233ad813";
+import getWeather from "./getWeather";
 
 function App() {
   const [city, setCity] = useState("");
-  const [weather, setWeather] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [forecast, setForecast] = useState([]);
 
+  const { weather, forecast, loading, error, fetchWeather } = getWeather();
 
-  const fetchWeather = async () => {
-    if (!city) return;
-
-    setLoading(true);
-    setError("");
-    setWeather(null);
-
-    try {
-      const weatherRes = await axiosInstance.get(
-        `${endPoints.WEATHER}?q=${city}&appid=${API_KEY}&units=metric`
-      );
-
-
-      const forecastRes = await axiosInstance.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`
-      );
-
-      setWeather(weatherRes.data);
-
-      const dailyData = forecastRes.data.list.filter((item, index) => index % 8 === 0);
-
-      setForecast(dailyData);
-      setCity("");
-    } catch (err) {
-      setError("City not found");
-    } finally {
-      setLoading(false);
-    }
+  const handleSearch = () => {
+    fetchWeather(city);
+    setCity("");
   };
 
   return (
@@ -54,7 +23,7 @@ function App() {
           value={city}
           onChange={(e) => setCity(e.target.value)}
         />
-        <button onClick={fetchWeather}>Search</button>
+        <button onClick={handleSearch}>Search</button>
       </div>
 
       {loading && <p>Loading...</p>}
@@ -62,17 +31,14 @@ function App() {
 
       {weather && (
         <div className="weather-container">
-          {/* TOP SECTION */}
           <div className="main-card">
             <h2>
               {weather.name}, {weather.sys.country}
             </h2>
-
             <h1>{weather.main.temp}°C</h1>
             <p className="desc">{weather.weather[0].description}</p>
           </div>
 
-          {/* GRID DATA */}
           <div className="grid">
             <div className="card">
               <h3>Max Temp</h3>
@@ -110,7 +76,6 @@ function App() {
           </div>
         </div>
       )}
-
 
       {forecast.length > 0 && (
         <div className="forecast">
