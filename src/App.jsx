@@ -85,8 +85,10 @@ function App() {
             {forecast.map((item, index) => (
               <div key={index} className="forecast-card">
                 <h4>
-                  {new Date(item.dt * 1000).toLocaleDateString("en-US", {
-                    weekday: "short",
+                  {new Date(item.dt * 1000).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
                   })}
                 </h4>
 
